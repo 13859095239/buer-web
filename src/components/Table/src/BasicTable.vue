@@ -23,6 +23,7 @@
       :hasSelected="hasSelected"
       :selectedRows="selectedRowsModel"
       :methods="getMethods()"
+      :siderToolbar="props.BasicSiderToolbar"
     >
       <BasicSearchForm
         v-if="props.searchFormLayout === 'inToolbar' && searchFormPropsComputed"

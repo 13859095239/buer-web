@@ -110,14 +110,16 @@
 @layer components {
   /** 外边框容器 */
   .outline-box {
-    @apply relative cursor-pointer p-1 outline outline-1;
+    @apply relative cursor-pointer p-1;
     border-radius: var(--td-radius-medium);
     outline-color: var(--td-brand-color-2);
+    outline: 1px solid transparent;
 
     &::after {
-      @apply absolute left-1/2 top-1/2 z-20 h-0 w-[1px] opacity-0 outline outline-2 outline-transparent transition-all duration-300;
+      @apply absolute left-1/2 top-1/2 z-20 h-0 w-[1px] opacity-0 transition-all duration-300;
       content: '';
       border-radius: var(--td-radius-medium);
+      outline: 2px solid transparent;
     }
 
     &.outline-box-active {
@@ -133,7 +135,8 @@
       @apply outline-transparent transition-all duration-100;
 
       &::after {
-        @apply outline outline-blue left-0 top-0 w-full h-full p-1 opacity-100;
+        @apply left-0 top-0 w-full h-full p-1 opacity-100;
+        outline: 2px solid rgb(59 130 246); /* blue-500 */
       }
     }
   }

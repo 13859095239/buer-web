@@ -130,3 +130,17 @@ export const getUserForeignKeyList = (ids: string) => {
     params: { ids }
   });
 };
+
+/**
+ * 导出用户数据
+ *
+ * @param params 查询参数
+ * @returns
+ */
+export const exportUser = (params: Recordable) => {
+  return http.post({
+    url: 'system/user/export',
+    data: params,
+    responseType: 'blob'
+  });
+};

@@ -60,6 +60,24 @@
           <template #icon><div class="i-tdesign:search size-5 color-[var(--td-text-color-secondary)]"></div></template>
         </Button>
       </Tooltip>
+      <!-- BasicSiderToolbar 按钮 -->
+      <template
+        v-for="item in siderToolbar"
+        :key="item.name"
+      >
+        <Tooltip :content="item.name">
+          <Button
+            theme="default"
+            variant="text"
+            class="p-x-2!"
+            @click="item.onClick"
+          >
+            <template #icon>
+              <component :is="getSiderIcon(item.icon)"></component>
+            </template>
+          </Button>
+        </Tooltip>
+      </template>
       <!-- 刷新表格数据 -->
       <Tooltip content="刷新表格数据">
         <Button
@@ -91,7 +109,7 @@ import type { VNode } from 'vue';
 import { h, toRefs } from 'vue';
 
 import { ActionIconEnum } from '../../enums';
-import type { BasicToolbar, TableMethods } from '../../types';
+import type { BasicToolbar, BasicSiderToolbar, TableMethods } from '../../types';
 
 const props = withDefaults(defineProps<Props>(), {});
 // 选中行对象列表model
@@ -106,8 +124,9 @@ interface Props {
   selectedRowKeys: string[];
   selectedRows: any[];
   methods?: TableMethods;
+  siderToolbar?: Array<BasicSiderToolbar>;
 }
-const { data, hasSelected, selectedRowKey, selectedRowKeys, selectedRows } = toRefs(props);
+const { data, hasSelected, selectedRowKey, selectedRowKeys, selectedRows, siderToolbar } = toRefs(props);
 const columnControllerVisible = defineModel<boolean>('columnControllerVisible', {
   default: false
 });
@@ -128,6 +147,40 @@ function getIcon(actionIconEnum?: ActionIconEnum): VNode | undefined {
       return h('div', { class: 'i-tdesign:rollback' });
     case ActionIconEnum.SETTING:
       return h('div', { class: 'i-material-symbols:check-box-outline' });
+    case ActionIconEnum.EXPORT:
+      return h('div', { class: 'i-tdesign:download' });
+  }
+}
+
+// 获取右侧工具栏按钮图标（带样式）
+function getSiderIcon(actionIconEnum?: ActionIconEnum): VNode | undefined {
+  if (!actionIconEnum) return undefined;
+  const iconClass = getIconClass(actionIconEnum);
+  if (!iconClass) return undefined;
+  return h('div', { class: `${iconClass} size-5 color-[var(--td-text-color-secondary)]` });
+}
+
+// 获取图标类名
+function getIconClass(actionIconEnum?: ActionIconEnum): string | undefined {
+  switch (actionIconEnum) {
+    case ActionIconEnum.ADD:
+      return 'i-tdesign:add';
+    case ActionIconEnum.EDIT:
+      return 'i-tdesign:edit';
+    case ActionIconEnum.VIEW:
+      return 'i-tdesign:file';
+    case ActionIconEnum.DELETE:
+      return 'i-tdesign:delete';
+    case ActionIconEnum.COPY:
+      return 'i-tdesign:copy';
+    case ActionIconEnum.REDO:
+      return 'i-tdesign:rollback';
+    case ActionIconEnum.SETTING:
+      return 'i-material-symbols:check-box-outline';
+    case ActionIconEnum.EXPORT:
+      return 'i-tdesign:download';
+    default:
+      return undefined;
   }
 }
 

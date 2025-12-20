@@ -39,15 +39,17 @@ import { MessagePlugin } from 'tdesign-vue-next';
 import { ref, shallowRef } from 'vue';
 
 import { treeDept } from '/@/api/system/dept';
-import { pageUser, removeUserByIds } from '/@/api/system/user';
+import { exportUser, pageUser, removeUserByIds } from '/@/api/system/user';
 import { SiderContainer } from '/@/components/Container';
 import { BasicExcelImportModal } from '/@/components/ExcelImportModal';
 import type { BasicTableProps, TableMethods } from '/@/components/Table';
 import { BasicTable } from '/@/components/Table';
+import { ActionIconEnum } from '/@/components/Table/src/enums';
 import { useTableActionsColumn } from '/@/components/Table/src/hooks/useColumn';
 import type { BasicTreeProps } from '/@/components/Tree';
 import { BasicTree } from '/@/components/Tree';
 import { useAppStore } from '/@/store/modules/app';
+import { saveFileByBlob } from '/@/utils/download';
 import { deleteSuccess, deleteWarnModel } from '/@/utils/prompt';
 
 import Edit from './Edit.vue';
@@ -69,6 +71,18 @@ const handleImportSuccess = (result: any) => {
 
 const handleImportError = (error: Error) => {
   MessagePlugin.error(`导入失败: ${error.message}`);
+};
+
+// 导出用户数据
+const handleExport = async () => {
+  const searchFormData = tableMethods.value.getSearchFormMethods?.()?.getFormData() || {};
+  const params = {
+    ...searchFormData,
+    deptId: deptId.value
+  };
+  const response = await exportUser(params);
+  saveFileByBlob(response as Blob, '用户数据');
+  MessagePlugin.success('导出成功');
 };
 /** 初始化部门树对象 */
 const treeProps = shallowRef<BasicTreeProps>({
@@ -170,6 +184,13 @@ const tableProps = shallowRef<BasicTableProps>({
       { label: '姓名', field: 'name', component: 'Input' },
       { label: '手机号', field: 'phone', component: 'Input' }
     ]
-  }
+  },
+  BasicSiderToolbar: [
+    {
+      name: '导出',
+      icon: ActionIconEnum.EXPORT,
+      onClick: handleExport
+    }
+  ]
 });
 </script>

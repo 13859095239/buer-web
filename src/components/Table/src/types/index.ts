@@ -3,6 +3,7 @@ export {
   BasicColumnType,
   BasicTableProps,
   BasicToolbar,
+  BasicSiderToolbar,
   ColumnAction,
   RegisterFn,
   SearchFormProps,

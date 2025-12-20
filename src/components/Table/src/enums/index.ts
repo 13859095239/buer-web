@@ -13,7 +13,8 @@ export enum ActionIconEnum {
   DELETE,
   SETTING,
   COPY,
-  REDO
+  REDO,
+  EXPORT
 }
 /** 编辑状态下的列的后缀 */
 export const EDITED_FIELD_SUFFIX = '-edited';

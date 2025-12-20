@@ -55,6 +55,9 @@ export interface BasicTableProps {
   /** 工具栏 */
   siderToolbar?: BasicToolbar[];
 
+  /** 右侧工具栏 */
+  BasicSiderToolbar?: BasicSiderToolbar[];
+
   /** form查询条件 */
   searchFormProps?: SearchFormProps;
 
@@ -156,7 +159,7 @@ export interface BasicSiderToolbar {
   /** 工具栏按钮皮肤 */
   theme?: TdButtonProps['theme'];
   /** 工具栏按钮点击事件 */
-  onClick: (params: { selectedRowKey: string; selectedRowKeys: string[]; selectedRows: Recordable[] }) => void;
+  onClick: () => void;
 }
 /**
  * 对外方法

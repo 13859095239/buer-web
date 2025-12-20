@@ -7,9 +7,7 @@
 import type Modeler from 'bpmn-js/lib/Modeler';
 import type { Ref } from 'vue';
 
-import { useDownload } from '/@/hooks/web/useDownload';
-
-const { saveFileByStr } = useDownload();
+import { saveFileByStr } from '/@/utils/download';
 export function useExports(modeler: Ref<Modeler>) {
   /**
    * 导出xml

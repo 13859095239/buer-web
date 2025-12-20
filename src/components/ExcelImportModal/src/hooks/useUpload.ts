@@ -10,8 +10,8 @@ import type { UploadFile } from 'tdesign-vue-next';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { computed, ref } from 'vue';
 
-import { useDownload } from '/@/hooks/web/useDownload';
 import { http } from '/@/utils/http';
+import { saveFileByBlob } from '/@/utils/download';
 
 import type { BasicExcelImportModalProps, UploadFileInfo } from '../types';
 
@@ -19,7 +19,6 @@ export function useUpload(props: BasicExcelImportModalProps) {
   const fileList = ref<UploadFile[]>([]);
   const uploadFileInfo = ref<UploadFileInfo | null>(null);
   const uploading = ref(false);
-  const { saveFileByBlob } = useDownload();
 
   /** 是否已上传文件 */
   const hasUploadedFile = computed(() => fileList.value.length > 0);

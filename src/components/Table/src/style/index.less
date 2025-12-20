@@ -1,0 +1,28 @@
+:deep {
+  // 编辑行角标
+  .edited-column:before {
+    content: '';
+    top: -5px;
+    left: -5px;
+    position: absolute;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent var(--td-warning-color-5) transparent transparent;
+    transform: rotate(45deg);
+  }
+  // 编辑行角标
+  .new-row-column:before {
+    content: '';
+    top: -5px;
+    left: -5px;
+    position: absolute;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent var(--td-success-color-5) transparent transparent;
+    transform: rotate(45deg);
+  }
+  // fix:tdesign新增行时样式问题
+  .t-table__row--hover {
+    background: var(--td-bg-color-container) !important;
+  }
+}

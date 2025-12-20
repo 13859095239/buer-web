@@ -1,0 +1,64 @@
+{
+  "compilerOptions": {
+    // 指定 ECMAScript 目标版本为最新
+    "target": "esnext",
+    // 指定生成的模块系统为最新 ES 模块
+    "module": "esnext",
+    // 模块解析策略使用 Node 风格
+    "moduleResolution": "node",
+    // 启用严格类型检查
+    "strict": true,
+    // 强制文件名大小写一致
+    "forceConsistentCasingInFileNames": true,
+    // 允许从没有默认导出的模块默认导入（仅类型检查）
+    "allowSyntheticDefaultImports": true,
+    // 禁用函数参数双向协变检查
+    "strictFunctionTypes": false,
+    // 在 .tsx 文件中保留 JSX
+    "jsx": "preserve",
+    // 非相对模块名解析的基准目录
+    "baseUrl": ".",
+    // 允许编译 JS 文件
+    "allowJs": true,
+    // 生成 .map 文件
+    "sourceMap": true,
+    // 启用 ES 模块互操作
+    "esModuleInterop": true,
+    // 支持导入 JSON 模块
+    "resolveJsonModule": true,
+    // 未使用的局部变量报错
+    "noUnusedLocals": true,
+    // 未使用的参数报错
+    "noUnusedParameters": true,
+    // 启用实验性的装饰器
+    "experimentalDecorators": true,
+    // 编译时包含的库
+    "lib": ["dom", "esnext"],
+    // 全局声明的文件
+    "types": ["vite/client","./src/types"],
+    // // 类型声明文件路径列表
+    "typeRoots": ["./node_modules/@types/","./src/types"],
+    // 增量编译
+    "incremental": true,
+    // 隐含 any 不报错
+    "noImplicitAny": false,
+    // 忽略声明文件类型检查
+    "skipLibCheck": true,
+    // 模块路径映射
+    "paths": { 
+      "/@/*": ["src/*"],
+      "/#/*": ["types/*"] 
+    },
+    // 输出目录
+    "outDir": "./"
+  },
+  // 要编译的文件
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue"
+  ],
+  // 排除文件
+  "exclude": ["node_modules","dist","**/*.js"]
+}

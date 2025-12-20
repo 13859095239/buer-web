@@ -1,0 +1,23 @@
+export type { BasicFormProps, FormMethods, FormSchema } from './form';
+export type ComponentType =
+  | 'Label'
+  | 'Input'
+  | 'InputNumber'
+  | 'InputTextArea'
+  | 'InputPassword'
+  | 'Select'
+  | 'Radio'
+  | 'Checkbox'
+  | 'CheckboxGroup'
+  | 'Tree'
+  | 'TreeSelect'
+  | 'Upload'
+  | 'Cascader'
+  | 'DatePicker'
+  | 'DateRangePicker'
+  | 'Rate'
+  | 'Switch'
+  | 'AutoComplete'
+  | 'Editor'
+  | 'SelectIcon'
+  | 'SelectUserModal';

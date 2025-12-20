@@ -1,0 +1,81 @@
+/** 路由页签 */
+.app-multiple-tabs {
+  height: @multiple-tabs-height;
+  line-height: @multiple-tabs-height;
+  @apply border-b z-10;
+  border-color: var(--td-component-border);
+  .t-tabs {
+    @apply h-full m-none border-none shadow-none;
+    /* tabs header */
+    .t-tabs__header {
+      .t-tabs__nav {
+        height: @multiple-tabs-height;
+        // & > div:nth-child(1) { }
+        /* tabs header 每个页签 */
+        .t-tabs__nav-item {
+          @apply m-l-10px m-t-3px p-x-12px! border-none visible bg-transparent transition-none of-visible;
+          height: calc(@multiple-tabs-height - 4px);
+          line-height: calc(@multiple-tabs-height - 4px);
+          border-top-left-radius: var(--td-radius-large);
+          border-top-right-radius: var(--td-radius-large);
+          --ripple-color: transparent;
+          &:hover {
+            .remove-btn {
+              opacity: 100%;
+            }
+          }
+          /** 选中页签 */
+          &.t-is-active {
+            position: relative;
+            background: var(--td-brand-color-light);
+            padding-left: 18px;
+            border: 0;
+            transition: none;
+            svg {
+              width: 0.7em;
+              fill: #fff !important;
+            }
+            .remove-btn {
+              opacity: 100%;
+            }
+            /** tab底脚效果-左边 */
+            &:before {
+              content: '';
+              @apply absolute! block! w-12px! left--12px! bottom-0px! h-9px!;
+              background: radial-gradient(circle at 0% 0%, transparent 12px, var(--td-brand-color-light) 0);
+              z-index: 9999;
+            }
+            /** tab底脚效果-右边 */
+            &:after {
+              content: '';
+              @apply absolute! block! w-12px! right--12px! bottom-0px! h-9px!;
+              background: radial-gradient(circle at 100% 0%, transparent 12px, var(--td-brand-color-light) 0);
+            }
+          }
+
+          .remove-btn {
+            color: inherit;
+            opacity: 0%;
+            font-size: 18px;
+            margin-left: 2px;
+            margin-right: -4px;
+            transition: none;
+
+            &:hover {
+              svg {
+                width: 0.8em;
+              }
+            }
+          }
+        }
+
+        .t-tabs__btn {
+          height: @multiple-tabs-height;
+        }
+        .t-tabs__nav-container {
+          background: transparent;
+        }
+      }
+    }
+  }
+}

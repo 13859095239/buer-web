@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:flowable="http://flowable.org/bpmn" id="diagram_flowAddClass" targetNamespace="http://flowable.org/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:process id="flowAddClass" name="创建班级审批" isExecutable="true">
+    <bpmn2:extensionElements>
+      <flowable:properties>
+        <flowable:property name="$OrangeDiagramType" value="0" />
+      </flowable:properties>
+    </bpmn2:extensionElements>
+    <bpmn2:startEvent id="Event_0192t4u">
+      <bpmn2:outgoing>Flow_1wojpz9</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:userTask id="Activity_0zoysjq" name="审批A" flowable:formKey="{&#34;routerName&#34;:&#34;formFlowClass&#34;,&#34;readOnly&#34;:true,&#34;groupType&#34;:&#34;USERS&#34;}" flowable:candidateUsers="leaderHR" flowable:rejectType="0">
+      <bpmn2:extensionElements>
+        <flowable:operationList>
+          <flowable:formOperation id="1713431673182" label="同意" type="agree" showOrder="0" />
+        </flowable:operationList>
+        <flowable:variableList />
+        <flowable:copyItemList />
+        <flowable:userCandidateGroups type="USERS" value="leaderHR" />
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_1wojpz9</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0nu68mf</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_1wojpz9" sourceRef="Event_0192t4u" targetRef="Activity_0zoysjq" />
+    <bpmn2:userTask id="Activity_0bxrq67" name="审批B" flowable:formKey="{&#34;routerName&#34;:&#34;formFlowClass&#34;,&#34;readOnly&#34;:true,&#34;groupType&#34;:&#34;USERS&#34;}" flowable:candidateUsers="admin,leaderHR,${startUserName}" flowable:rejectType="0">
+      <bpmn2:extensionElements>
+        <flowable:variableList />
+        <flowable:copyItemList />
+        <flowable:operationList>
+          <flowable:formOperation id="1713431663079" label="同意" type="agree" showOrder="0" />
+          <flowable:formOperation id="1713431668865" label="驳回" type="reject" showOrder="0" />
+        </flowable:operationList>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0nu68mf</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_0cq2p50</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_0nu68mf" sourceRef="Activity_0zoysjq" targetRef="Activity_0bxrq67" />
+    <bpmn2:userTask id="Activity_095mxks" name="审批C" flowable:formKey="{&#34;routerName&#34;:&#34;formFlowClass&#34;,&#34;readOnly&#34;:true,&#34;groupType&#34;:&#34;DEPT&#34;}" flowable:assignee="${assignee}" flowable:candidateGroups="1781496141238505472,1781496189452029952,1781496889502339072,1781496959412998144" flowable:rejectType="">
+      <bpmn2:extensionElements>
+        <flowable:variableList />
+        <flowable:copyItemList />
+        <flowable:userCandidateGroups type="DEPT" value="1781496141238505472,1781496189452029952,1781496889502339072,1781496959412998144" />
+        <flowable:operationList>
+          <flowable:formOperation id="1713431654540" label="同意" type="agree" showOrder="0" />
+          <flowable:formOperation id="1713431658351" label="驳回到起点" type="rejectToStart" showOrder="0" />
+        </flowable:operationList>
+      </bpmn2:extensionElements>
+      <bpmn2:incoming>Flow_0cq2p50</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1ap121c</bpmn2:outgoing>
+      <bpmn2:multiInstanceLoopCharacteristics flowable:collection="assigneeList" flowable:elementVariable="assignee" />
+    </bpmn2:userTask>
+    <bpmn2:sequenceFlow id="Flow_0cq2p50" sourceRef="Activity_0bxrq67" targetRef="Activity_095mxks" />
+    <bpmn2:endEvent id="Event_0dkn0nt">
+      <bpmn2:incoming>Flow_1ap121c</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="Flow_1ap121c" sourceRef="Activity_095mxks" targetRef="Event_0dkn0nt" />
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="flowAddClass">
+      <bpmndi:BPMNEdge id="Flow_1ap121c_di" bpmnElement="Flow_1ap121c">
+        <di:waypoint x="710" y="310" />
+        <di:waypoint x="772" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cq2p50_di" bpmnElement="Flow_0cq2p50">
+        <di:waypoint x="550" y="310" />
+        <di:waypoint x="610" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0nu68mf_di" bpmnElement="Flow_0nu68mf">
+        <di:waypoint x="390" y="310" />
+        <di:waypoint x="450" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wojpz9_di" bpmnElement="Flow_1wojpz9">
+        <di:waypoint x="238" y="310" />
+        <di:waypoint x="290" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_0192t4u_di" bpmnElement="Event_0192t4u">
+        <dc:Bounds x="202" y="292" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0zoysjq_di" bpmnElement="Activity_0zoysjq">
+        <dc:Bounds x="290" y="270" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0bxrq67_di" bpmnElement="Activity_0bxrq67">
+        <dc:Bounds x="450" y="270" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_095mxks_di" bpmnElement="Activity_095mxks">
+        <dc:Bounds x="610" y="270" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0dkn0nt_di" bpmnElement="Event_0dkn0nt">
+        <dc:Bounds x="772" y="292" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

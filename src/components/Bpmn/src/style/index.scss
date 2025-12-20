@@ -1,0 +1,25 @@
+/**
+* BPMN 样式入口
+* 官方样式不做修改，后续升级直接替换官方最新版
+* 最新版github下载 https://github.com/bpmn-io
+* 
+* @author zoulan
+* @since 2024-05-30
+*/
+@import url('./bpmn-js.css');
+@import url('./diagram-js.css');
+@import url('./bpmn.css');
+@import url('./bpmn-codes.css');
+@import url('./bpmn-embedded.css');
+@import url('./bpmn-js-bpmnlint.css');
+@import url('./bpmn-js-token-simulation.css');
+.bjs-powered-by {
+  display: none;
+}
+.bts-toggle-mode {
+  display: none;
+}
+// 去掉点击画布时黑色边框
+.djs-container svg:focus {
+  outline: none !important;
+}

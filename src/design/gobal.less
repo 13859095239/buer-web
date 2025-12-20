@@ -1,0 +1,149 @@
+/**
+ * 全局样式
+ * 使用 Tailwind CSS 的 @tailwind 指令来引入基础、组件和工具类样式。
+ * 通过 @layer 指令扩展样式。
+ *
+ * @author zoulan
+ * @since 2025-06-21
+ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *,
+  ::after,
+  ::before {
+    @apply border-border;
+    box-sizing: border-box;
+    border-style: solid;
+    border-width: 0;
+  }
+
+  html {
+    @apply text-foreground bg-background font-sans;
+    font-size: 100%;
+    font-variation-settings: normal;
+    line-height: 1.15;
+    text-size-adjust: 100%;
+    font-synthesis-weight: none;
+    scroll-behavior: smooth;
+    text-rendering: optimizelegibility;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  #app,
+  body,
+  html {
+    @apply size-full;
+    @apply m-0;
+  }
+
+  body {
+    min-height: 100vh;
+  }
+
+  a,
+  a:active,
+  a:hover,
+  a:link,
+  a:visited {
+    @apply no-underline;
+  }
+
+  ::view-transition-new(root),
+  ::view-transition-old(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  /* 旧视图 */
+  ::view-transition-old(root) {
+    z-index: 1;
+  }
+
+  /* 新视图 */
+  ::view-transition-new(root) {
+    z-index: 2147483646;
+  }
+
+  /* 旧视图，暗黑模式 */
+  html[theme-mode='dark']::view-transition-old(root) {
+    z-index: 2147483646;
+  }
+
+  /* 新视图，暗黑模式 */
+  html[theme-mode='dark']::view-transition-new(root) {
+    z-index: 1;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    @apply opacity-100;
+  }
+
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    @apply m-0 appearance-none;
+  }
+
+  /* 只有非 mac 下才进行调整，mac 下使用默认滚动条 */
+  html:not([data-platform='macOs']) {
+    ::-webkit-scrollbar {
+      @apply h-[10px] w-[10px];
+    }
+
+    ::-webkit-scrollbar-thumb {
+      @apply bg-border rounded-sm border-none;
+    }
+
+    ::-webkit-scrollbar-track {
+      @apply rounded-sm border-none bg-transparent shadow-none;
+    }
+
+    ::-webkit-scrollbar-button {
+      display: none;
+    }
+  }
+}
+
+@layer components {
+  /** 外边框容器 */
+  .outline-box {
+    @apply relative cursor-pointer p-1 outline outline-1;
+    border-radius: var(--td-radius-medium);
+    outline-color: var(--td-brand-color-2);
+
+    &::after {
+      @apply absolute left-1/2 top-1/2 z-20 h-0 w-[1px] opacity-0 outline outline-2 outline-transparent transition-all duration-300;
+      content: '';
+      border-radius: var(--td-radius-medium);
+    }
+
+    &.outline-box-active {
+      @apply outline outline-2;
+      outline-color: var(--td-brand-color-6);
+
+      &::after {
+        display: none;
+      }
+    }
+
+    &:not(.outline-box-active):hover {
+      @apply outline-transparent transition-all duration-100;
+
+      &::after {
+        @apply outline outline-blue left-0 top-0 w-full h-full p-1 opacity-100;
+      }
+    }
+  }
+
+  /** 组件拖拽样式 */
+  .draggable {
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+}

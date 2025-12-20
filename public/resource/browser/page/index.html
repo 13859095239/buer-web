@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="down">
+        <h1 class="title">您的版本浏览器版本不兼容,建议安装chrome、firefox浏览器！</h1>
+        <ul class="horizontal">
+            <li>
+                <img src='img/chrome.png' />
+                <p class="browser-name">chrome下载</p>
+                <p class="browser-down">
+                    <a href="javascript:down('chrome32.rar')">32位下载</a>
+                    <a href="javascript:down('chrome64.rar')">64位下载</a>
+                </p>
+            </li>
+            <li>
+                <img src='img/firefox.png' />
+                <p class="browser-name">firefox下载</p>
+                <p class="browser-down">
+                    <a href="javascript:down('firefox32.rar')">32位下载</a>
+                    <a href="javascript:down('firefox64.rar')">64位下载</a>
+                </p>
+            </li>
+        </ul>
+    </div>
+    </div>
+</body>
+
+</html>
+<script>
+    function down(fileName) {
+        var url = '../' + fileName
+        window.open(url)
+    }
+</script>

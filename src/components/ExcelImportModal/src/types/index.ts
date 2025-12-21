@@ -12,8 +12,6 @@ export interface BasicExcelImportModalProps {
   visible?: boolean;
   /** 模态框标题 */
   title?: string;
-  /** 上传接口地址 */
-  uploadUrl?: string;
   /** 导入接口地址 */
   importUrl?: string;
   /** 请求头 */
@@ -62,20 +60,6 @@ export interface UploadFileInfo {
   status: 'uploading' | 'success' | 'error';
 }
 
-/** 导入进度信息 */
-export interface ImportProgress {
-  /** 当前步骤 */
-  currentStep: number;
-  /** 总步骤数 */
-  totalSteps: number;
-  /** 当前步骤描述 */
-  currentStepText: string;
-  /** 进度百分比 */
-  progress: number;
-  /** 是否完成 */
-  completed: boolean;
-}
-
 /** 模态框方法 */
 export interface ExcelImportModalMethods {
   /** 显示模态框 */
@@ -86,8 +70,6 @@ export interface ExcelImportModalMethods {
   reset: () => void;
   /** 开始导入 */
   startImport: () => Promise<void>;
-  /** 取消导入 */
-  cancelImport: () => Promise<void>;
   /** 下载模板 */
   downloadTemplate: () => void;
   /** 导出错误日志 */
@@ -99,7 +81,6 @@ export interface ExcelImportModalEmit {
   (e: 'update:visible', visible: boolean): void;
   (e: 'success', result: ImportResult): void;
   (e: 'error', error: Error): void;
-  (e: 'progress', progress: ImportProgress): void;
   (e: 'upload-success', fileInfo: UploadFileInfo): void;
   (e: 'upload-error', error: Error): void;
 }

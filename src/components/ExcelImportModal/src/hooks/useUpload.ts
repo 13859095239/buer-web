@@ -10,8 +10,8 @@ import type { UploadFile } from 'tdesign-vue-next';
 import { MessagePlugin } from 'tdesign-vue-next';
 import { computed, ref } from 'vue';
 
-import { http } from '/@/utils/http';
 import { saveFileByBlob } from '/@/utils/download';
+import { http } from '/@/utils/http';
 
 import type { BasicExcelImportModalProps, UploadFileInfo } from '../types';
 
@@ -20,8 +20,32 @@ export function useUpload(props: BasicExcelImportModalProps) {
   const uploadFileInfo = ref<UploadFileInfo | null>(null);
   const uploading = ref(false);
 
-  /** 是否已上传文件 */
+  /** 是否已选择文件 */
   const hasUploadedFile = computed(() => fileList.value.length > 0);
+
+  /** 当前选择的文件信息 */
+  const selectedFileInfo = computed(() => {
+    if (fileList.value.length > 0) {
+      const file = fileList.value[0];
+      if (file.raw) {
+        return {
+          fileName: file.name,
+          fileSize: file.size || 0,
+          file: file.raw as File
+        };
+      }
+    }
+    return null;
+  });
+
+  /** 获取当前选择的文件对象 */
+  const getCurrentFile = (): File | null => {
+    if (fileList.value.length > 0) {
+      const file = fileList.value[0];
+      return file.raw as File || null;
+    }
+    return null;
+  };
 
   /** 上传前的文件校验 */
   const beforeUpload = (file: File) => {
@@ -77,6 +101,8 @@ export function useUpload(props: BasicExcelImportModalProps) {
     fileList.value = files;
     if (files.length === 0) {
       uploadFileInfo.value = null;
+    } else {
+      // 文件选择后不自动上传，只更新文件列表
     }
   };
 
@@ -150,6 +176,8 @@ export function useUpload(props: BasicExcelImportModalProps) {
     uploadFileInfo,
     uploading,
     hasUploadedFile,
+    selectedFileInfo,
+    getCurrentFile,
     beforeUpload,
     onUploadSuccess,
     onUploadError,

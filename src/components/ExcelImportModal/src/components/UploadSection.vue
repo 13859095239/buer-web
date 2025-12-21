@@ -10,7 +10,7 @@
   <div>
     <Upload
       v-model="fileList"
-      :action="uploadUrl"
+      :action="actionUrl"
       :headers="headers"
       :beforeUpload="beforeUpload"
       :onSuccess="onUploadSuccess"
@@ -18,18 +18,18 @@
       :onProgress="onUploadProgress"
       :onChange="onFileChange"
       :max="1"
-      :autoUpload="true"
+      :autoUpload="false"
       theme="file"
       :disabled="uploading"
-      placeholder="点击上传Excel文件"
+      placeholder="点击选择Excel文件"
       tips="支持 .xlsx, .xls 格式，文件大小不超过 10MB"
     />
 
-    <!-- 已上传文件信息 -->
+    <!-- 已选择文件信息 -->
     <Alert
-      v-if="uploadFileInfo"
-      theme="success"
-      :message="`文件已上传: ${uploadFileInfo.fileName} (${formatFileSize(uploadFileInfo.fileSize)})`"
+      v-if="selectedFileInfo"
+      theme="info"
+      :message="`已选择文件: ${selectedFileInfo.fileName} (${formatFileSize(selectedFileInfo.fileSize)})`"
       :action="!uploading ? { content: '删除', onClick: removeFile } : undefined"
     />
 
@@ -51,31 +51,34 @@
 </template>
 <script setup lang="ts">
 import { Alert, Button, Upload } from 'tdesign-vue-next';
+import { computed } from 'vue';
 
 import { useUpload } from '../hooks/useUpload';
 import type { BasicExcelImportModalProps } from '../types';
 
 interface Props {
-  uploadUrl?: string;
+  importUrl?: string;
   headers?: Record<string, string>;
   templateUrl?: string;
   uploading: boolean;
 }
 
 const props = defineProps<Props>();
-
 const emit = defineEmits<{
   'download-template': [];
   'upload-success': [fileInfo: any];
   'upload-error': [error: Error];
 }>();
-
+const actionUrl = computed(() => {
+  return `${import.meta.env.VITE_BASE_API}/${props.importUrl}`;
+});
+const headers = computed(() => props.headers || {});
 // 使用 defineModel 处理 fileList 的双向绑定
 const fileList = defineModel<any[]>('fileList', { default: () => [] });
 
 // 使用 useUpload hook
 const {
-  uploadFileInfo,
+  selectedFileInfo,
   beforeUpload,
   onUploadSuccess,
   onUploadError,

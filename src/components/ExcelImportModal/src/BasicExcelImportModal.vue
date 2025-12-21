@@ -1,7 +1,6 @@
 <!--
   - Excel导入模态框组件
   - 支持Excel文件上传、解析、导入功能
-  - 使用EventSource实现实时进度监听
   - 
   - @author zoulan
   - @since 2025-10-01
@@ -20,22 +19,13 @@
       <div v-if="!isImportCompleted">
         <UploadSection
           v-model:fileList="fileList"
-          :uploadUrl="props.uploadUrl"
+          :importUrl="props.importUrl"
           :headers="props.headers"
           :templateUrl="props.templateUrl"
           :uploading="importing"
           @download-template="downloadTemplate"
           @upload-success="handleUploadSuccess"
           @upload-error="handleUploadError"
-        />
-      </div>
-
-      <!-- 导入进度 -->
-      <div v-if="importing || isImportCompleted">
-        <ImportProgress
-          :importing="importing"
-          :importProgress="importProgress"
-          @cancel="handleCancelImport"
         />
       </div>
 
@@ -82,7 +72,6 @@ import { Button, MessagePlugin } from 'tdesign-vue-next';
 import { computed } from 'vue';
 
 import { BasicModal } from '../../Modal';
-import ImportProgress from './components/ImportProgress.vue';
 import ImportResult from './components/ImportResult.vue';
 import UploadSection from './components/UploadSection.vue';
 import { useImport } from './hooks/useImport';
@@ -97,18 +86,9 @@ const props = withDefaults(defineProps<BasicExcelImportModalProps>(), {
 const emit = defineEmits<ExcelImportModalEmit>();
 
 // 使用组合式函数
-const { fileList, uploadFileInfo, hasUploadedFile, downloadTemplate, resetUpload } = useUpload(props);
+const { fileList, hasUploadedFile, getCurrentFile, downloadTemplate, resetUpload } = useUpload(props);
 
-const {
-  importing,
-  importResult,
-  importProgress,
-  isImportCompleted,
-  handleImport,
-  cancelImport,
-  exportErrorLog,
-  resetImport
-} = useImport(props);
+const { importing, importResult, isImportCompleted, handleImport, exportErrorLog, resetImport } = useImport(props);
 
 // 计算属性
 const visible = computed({
@@ -127,21 +107,13 @@ const handleUploadError = (error: Error) => {
 
 const handleImportClick = async () => {
   try {
-    const result = await handleImport(uploadFileInfo.value);
+    const file = getCurrentFile();
+    const result = await handleImport(file);
     if (result) {
       emit('success', result);
     }
   } catch (error) {
     emit('error', error instanceof Error ? error : new Error('导入失败'));
-  }
-};
-
-const handleCancelImport = async () => {
-  try {
-    await cancelImport();
-    MessagePlugin.info('导入已取消');
-  } catch {
-    MessagePlugin.error('取消导入失败');
   }
 };
 
@@ -169,7 +141,6 @@ const methods: Partial<ExcelImportModalMethods> = {
     resetImport();
   },
   startImport: handleImportClick,
-  cancelImport: handleCancelImport,
   downloadTemplate,
   exportErrorLog
 };

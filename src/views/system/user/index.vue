@@ -26,8 +26,7 @@
     <BasicExcelImportModal
       v-model:visible="importVisible"
       title="用户数据导入"
-      uploadUrl="system/user/upload"
-      importUrl="system/user/import/async"
+      importUrl="system/user/import"
       templateUrl="system/user/template"
       @success="handleImportSuccess"
       @error="handleImportError"

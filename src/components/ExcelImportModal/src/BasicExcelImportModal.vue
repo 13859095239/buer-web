@@ -1,149 +1,139 @@
 <!--
-  - Excel导入模态框组件
-  - 支持Excel文件上传、解析、导入功能
-  - 
+  - Excel导入弹窗组件
+  -
   - @author zoulan
-  - @since 2025-10-01
+  - @since 2025-01-17
   -->
 <template>
   <BasicModal
     v-model:visible="visible"
-    :width="800"
-    top="5vh"
-    :title="props.title || 'Excel数据导入'"
+    :title="props.title"
+    :width="600"
     :footer="false"
-    @close="handleClose"
   >
-    <div>
-      <!-- 上传区域 -->
-      <div v-if="!isImportCompleted">
-        <UploadSection
-          v-model:fileList="fileList"
-          :importUrl="props.importUrl"
-          :headers="props.headers"
-          :templateUrl="props.templateUrl"
-          :uploading="importing"
-          @download-template="downloadTemplate"
-          @upload-success="handleUploadSuccess"
-          @upload-error="handleUploadError"
-        />
+    <div class="excel-import-modal">
+      <div class="mb-4">
+        <TButton
+          theme="default"
+          variant="outline"
+          @click="handleDownloadTemplate"
+        >
+          <template #icon>
+            <div class="i-tdesign:download mr-1.5 mt-3px"></div>
+          </template>
+          下载模板
+        </TButton>
       </div>
 
-      <!-- 导入结果 -->
-      <div v-if="importResult && isImportCompleted">
-        <ImportResult
-          :importResult="importResult"
-          @export-error-log="exportErrorLog"
-        />
-      </div>
+      <t-upload
+        v-model="fileList"
+        accept=".xls,.xlsx"
+        :autoUpload="false"
+        :formatResponse="formatResponse"
+        :max="1"
+        :requestMethod="undefined"
+        theme="file"
+        @change="handleFileChange"
+      >
+        <template #uploadTrigger>
+          <TButton
+            theme="primary"
+            :disabled="uploading"
+          >
+            <template #icon>
+              <div class="i-tdesign:cloud-upload mr-1.5 mt-3px"></div>
+            </template>
+            选择Excel文件
+          </TButton>
+        </template>
+      </t-upload>
 
-      <!-- 操作按钮 -->
-      <div class="flex justify-end gap-3 border-t pt-4">
-        <Button
-          v-if="!isImportCompleted && hasUploadedFile && !importing"
-          theme="primary"
-          :loading="importing"
-          @click="handleImportClick"
-        >
-          开始导入
-        </Button>
+      <FileInfo
+        :file="selectedFile"
+        class="mt-4"
+      />
 
-        <Button
-          v-if="isImportCompleted"
-          theme="primary"
-          @click="handleClose"
-        >
-          完成
-        </Button>
+      <ImportResult
+        :result="importResult"
+        class="mt-4"
+        @download="handleDownloadErrorFile"
+      />
+    </div>
 
-        <Button
-          v-if="!importing"
+    <template #footer>
+      <div class="flex justify-end gap-2">
+        <TButton
           theme="default"
           @click="handleClose"
         >
-          {{ isImportCompleted ? '关闭' : '取消' }}
-        </Button>
+          关闭
+        </TButton>
+        <TButton
+          theme="primary"
+          :loading="uploading"
+          :disabled="!selectedFile || uploading"
+          @click="handleImport"
+        >
+          开始导入
+        </TButton>
       </div>
-    </div>
+    </template>
   </BasicModal>
 </template>
 <script setup lang="ts">
-import { Button, MessagePlugin } from 'tdesign-vue-next';
-import { computed } from 'vue';
+import { Button as TButton } from 'tdesign-vue-next';
+import { watch } from 'vue';
 
-import { BasicModal } from '../../Modal';
+import { BasicModal } from '/@/components/Modal';
+
+import FileInfo from './components/FileInfo.vue';
 import ImportResult from './components/ImportResult.vue';
-import UploadSection from './components/UploadSection.vue';
+import { useErrorFile } from './hooks/useErrorFile';
+import { useFile } from './hooks/useFile';
 import { useImport } from './hooks/useImport';
-import { useUpload } from './hooks/useUpload';
-import type { BasicExcelImportModalProps, ExcelImportModalEmit, ExcelImportModalMethods } from './types';
+import { useTemplate } from './hooks/useTemplate';
+import type { BasicExcelImportModalProps, ExcelImportModalEmit } from './types';
 
 const props = withDefaults(defineProps<BasicExcelImportModalProps>(), {
-  visible: false,
   title: 'Excel数据导入'
 });
 
 const emit = defineEmits<ExcelImportModalEmit>();
 
-// 使用组合式函数
-const { fileList, hasUploadedFile, getCurrentFile, downloadTemplate, resetUpload } = useUpload(props);
+const visible = defineModel<boolean>('visible', { default: false });
 
-const { importing, importResult, isImportCompleted, handleImport, exportErrorLog, resetImport } = useImport(props);
+// 使用 hooks
+const { fileList, selectedFile, originalFileBuffer, formatResponse, handleFileChange, clearFile } = useFile();
+const { handleDownloadTemplate } = useTemplate(props.templateUrl, emit);
+const { uploading, importResult, handleImport, clearImportResult } = useImport(props.importUrl, selectedFile, emit);
+const { handleDownloadErrorFile } = useErrorFile(originalFileBuffer, importResult, selectedFile);
 
-// 计算属性
-const visible = computed({
-  get: () => props.visible,
-  set: (value) => emit('update:visible', value)
-});
-
-// 方法
-const handleUploadSuccess = (fileInfo: any) => {
-  emit('upload-success', fileInfo);
-};
-
-const handleUploadError = (error: Error) => {
-  emit('upload-error', error);
-};
-
-const handleImportClick = async () => {
-  try {
-    const file = getCurrentFile();
-    const result = await handleImport(file);
-    if (result) {
-      emit('success', result);
-    }
-  } catch (error) {
-    emit('error', error instanceof Error ? error : new Error('导入失败'));
-  }
-};
-
+// 关闭弹窗
 const handleClose = () => {
-  if (importing.value) {
-    MessagePlugin.warning('正在导入中，请稍候...');
-    return;
-  }
-
   visible.value = false;
-  resetUpload();
-  resetImport();
+  // 延迟清空，等待弹窗关闭动画完成
+  setTimeout(() => {
+    clearFile();
+    clearImportResult();
+  }, 300);
 };
 
-// 暴露方法
-const methods: Partial<ExcelImportModalMethods> = {
-  show: () => {
-    visible.value = true;
-  },
-  hide: () => {
-    visible.value = false;
-  },
-  reset: () => {
-    resetUpload();
-    resetImport();
-  },
-  startImport: handleImportClick,
-  downloadTemplate,
-  exportErrorLog
-};
-
-defineExpose(methods);
+// 监听visible变化，重置状态
+watch(
+  () => visible.value,
+  (newVal) => {
+    if (!newVal) {
+      // 弹窗关闭时清空状态
+      setTimeout(() => {
+        clearFile();
+        clearImportResult();
+      }, 300);
+    }
+  }
+);
 </script>
+<style lang="less" scoped>
+.excel-import-modal {
+  padding: 20px 0;
+}
+</style>

@@ -1,163 +1,109 @@
 /**
- * 导入相关逻辑
- * 处理Excel导入、进度监听、错误处理等功能
+ * 导入处理 hooks
+ * 处理Excel文件导入逻辑
  *
  * @author zoulan
- * @since 2025-10-01
+ * @since 2024-01-01
  */
-
-import { saveAs } from 'file-saver';
 import { MessagePlugin } from 'tdesign-vue-next';
-import { computed, ref } from 'vue';
-import * as XLSX from 'xlsx';
+import type { Ref } from 'vue';
+import { ref } from 'vue';
 
 import { http } from '/@/utils/http';
 
-import type { BasicExcelImportModalProps, ImportResult } from '../types';
+import type { ExcelImportModalEmit, ImportSuccessResult } from '../types';
 
-export function useImport(props: BasicExcelImportModalProps) {
-  const importing = ref(false);
+export interface ImportResult {
+  success: number;
+  hasError: boolean;
+  errorCount?: number;
+  errorRows?: Array<{ rowIndex: number; message: string }>;
+}
+
+/**
+ * 导入处理
+ * @param importUrl 导入接口地址
+ * @param selectedFile 选中的文件
+ * @param emit 事件发射器
+ */
+export function useImport(importUrl: string | undefined, selectedFile: Ref<File | null>, emit: ExcelImportModalEmit) {
+  const uploading = ref(false);
   const importResult = ref<ImportResult | null>(null);
-  const importCompleted = ref(false);
 
-  /** 是否导入完成 */
-  const isImportCompleted = computed(() => importCompleted.value);
-
-  /** 开始导入 */
-  const startImport = async (file: File): Promise<ImportResult> => {
-    if (!props.importUrl) {
-      throw new Error('导入接口地址未配置');
+  /**
+   * 执行导入
+   */
+  const handleImport = async () => {
+    if (!selectedFile.value) {
+      MessagePlugin.warning('请先选择文件');
+      return;
     }
 
-    importing.value = true;
+    if (!importUrl) {
+      MessagePlugin.warning('导入地址未配置');
+      return;
+    }
+
+    uploading.value = true;
     importResult.value = null;
-    importCompleted.value = false;
 
     try {
-      // 创建 FormData 对象
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', selectedFile.value);
 
-      // 调用导入接口
-      const resultString = await http.post<string>({
-        url: props.importUrl,
+      const response = await http.post({
+        url: importUrl,
         data: formData,
         headers: {
-          'Content-Type': 'multipart/form-data',
-          ...props.headers
+          'Content-Type': 'multipart/form-data'
         }
       });
 
-      // 解析后端返回的字符串结果
-      // 后端返回格式： "导入完成，成功：X条，失败：Y条"
-      const successMatch = resultString.match(/成功[：:]\s*(\d+)/);
-      const failedMatch = resultString.match(/失败[：:]\s*(\d+)/);
+      // 处理响应结果
+      // 假设后端返回格式: { success: number, errorRows?: Array<{ rowIndex: number, message: string }> }
+      const result = response as any;
+      const errorRows = result.errorRows || [];
+      const successCount = result.success || 0;
 
-      const success = successMatch ? Number.parseInt(successMatch[1], 10) : 0;
-      const failed = failedMatch ? Number.parseInt(failedMatch[1], 10) : 0;
-      const total = success + failed;
-
-      const result: ImportResult = {
-        total,
-        success,
-        failed,
-        errors: failed > 0 ? [] : undefined
+      importResult.value = {
+        success: successCount,
+        hasError: errorRows.length > 0,
+        errorCount: errorRows.length,
+        errorRows
       };
 
-      // 导入完成
-      importCompleted.value = true;
-      importResult.value = result;
+      const successResult: ImportSuccessResult = {
+        success: successCount,
+        hasError: errorRows.length > 0,
+        errorRows: errorRows.length > 0 ? errorRows : undefined
+      };
 
-      if (result.failed > 0) {
-        MessagePlugin.warning(`导入完成，成功 ${result.success} 条，失败 ${result.failed} 条`);
+      if (errorRows.length > 0) {
+        MessagePlugin.warning(`导入完成，共导入 ${successCount} 条数据，${errorRows.length} 条数据有异常`);
+        emit('success', successResult);
       } else {
-        MessagePlugin.success(`导入成功，共导入 ${result.success} 条数据`);
+        MessagePlugin.success(`导入成功，共导入 ${successCount} 条数据`);
+        emit('success', successResult);
       }
-
-      return result;
-    } catch (error) {
-      importing.value = false;
-      importCompleted.value = false;
-      MessagePlugin.error(`导入失败: ${error instanceof Error ? error.message : '未知错误'}`);
-      throw error;
+    } catch (error: any) {
+      MessagePlugin.error(`导入失败: ${error.message || '未知错误'}`);
+      emit('error', error);
     } finally {
-      importing.value = false;
+      uploading.value = false;
     }
   };
 
-  /** 处理导入操作 */
-  const handleImport = async (file: File | null) => {
-    if (!file) {
-      MessagePlugin.error('请先选择文件');
-      return;
-    }
-
-    try {
-      const result = await startImport(file);
-      return result;
-    } catch (error) {
-      throw error instanceof Error ? error : new Error('导入失败');
-    }
-  };
-
-  /** 导出错误日志 */
-  const exportErrorLog = () => {
-    if (!importResult.value?.errors || importResult.value.errors.length === 0) {
-      MessagePlugin.warning('没有错误日志可导出');
-      return;
-    }
-
-    try {
-      // 准备数据
-      const errorData = importResult.value.errors.map((error, index) => ({
-        序号: index + 1,
-        行号: error.row,
-        列名: error.column || '',
-        错误信息: error.message,
-        数据值: error.value || '',
-        导入时间: new Date().toLocaleString()
-      }));
-
-      // 创建工作表
-      const worksheet = XLSX.utils.json_to_sheet(errorData);
-
-      // 创建工作簿
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, '错误日志');
-
-      // 生成文件并下载
-      const excelBuffer = XLSX.write(workbook, {
-        bookType: 'xlsx',
-        type: 'array'
-      });
-
-      const data = new Blob([excelBuffer], {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      });
-
-      saveAs(data, `导入错误日志_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.xlsx`);
-
-      MessagePlugin.success('错误日志导出成功');
-    } catch (error) {
-      MessagePlugin.error('导出错误日志失败');
-      console.error('导出错误日志失败:', error);
-    }
-  };
-
-  /** 重置导入状态 */
-  const resetImport = () => {
-    importing.value = false;
+  /**
+   * 清空导入结果
+   */
+  const clearImportResult = () => {
     importResult.value = null;
-    importCompleted.value = false;
   };
 
   return {
-    importing,
+    uploading,
     importResult,
-    isImportCompleted,
-    startImport,
     handleImport,
-    exportErrorLog,
-    resetImport
+    clearImportResult
   };
 }

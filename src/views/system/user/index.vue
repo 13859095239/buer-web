@@ -65,7 +65,7 @@ const importVisible = ref(false);
 const handleImportSuccess = (result: any) => {
   MessagePlugin.success(`导入成功，共导入 ${result.success} 条数据`);
   tableMethods.value.reload();
-  importVisible.value = false;
+  // importVisible.value = false;
 };
 
 const handleImportError = (error: Error) => {

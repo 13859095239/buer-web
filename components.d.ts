@@ -59,6 +59,7 @@ declare module 'vue' {
     DictSrcBasicDictTag: typeof import('./src/components/Dict/src/BasicDictTag.vue')['default']
     DrawerSrcBasicDrawer: typeof import('./src/components/Drawer/src/BasicDrawer.vue')['default']
     ExcelImportModalSrcBasicExcelImportModal: typeof import('./src/components/ExcelImportModal/src/BasicExcelImportModal.vue')['default']
+    ExcelImportModalSrcComponentsFileInfo: typeof import('./src/components/ExcelImportModal/src/components/FileInfo.vue')['default']
     ExcelImportModalSrcComponentsImportProgress: typeof import('./src/components/ExcelImportModal/src/components/ImportProgress.vue')['default']
     ExcelImportModalSrcComponentsImportResult: typeof import('./src/components/ExcelImportModal/src/components/ImportResult.vue')['default']
     ExcelImportModalSrcComponentsUploadSection: typeof import('./src/components/ExcelImportModal/src/components/UploadSection.vue')['default']
@@ -107,6 +108,7 @@ declare module 'vue' {
     TreeSelectSrcBasicTreeSelect: typeof import('./src/components/TreeSelect/src/BasicTreeSelect.vue')['default']
     TreeSrcBasicTree: typeof import('./src/components/Tree/src/BasicTree.vue')['default']
     TreeSrcComponentsSearchForm: typeof import('./src/components/Tree/src/components/searchForm/index.vue')['default']
+    TUpload: typeof import('tdesign-vue-next')['Upload']
     UploadSrcBasicUpload: typeof import('./src/components/Upload/src/BasicUpload.vue')['default']
   }
 }
@@ -160,6 +162,7 @@ declare global {
   const DictSrcBasicDictTag: typeof import('./src/components/Dict/src/BasicDictTag.vue')['default']
   const DrawerSrcBasicDrawer: typeof import('./src/components/Drawer/src/BasicDrawer.vue')['default']
   const ExcelImportModalSrcBasicExcelImportModal: typeof import('./src/components/ExcelImportModal/src/BasicExcelImportModal.vue')['default']
+  const ExcelImportModalSrcComponentsFileInfo: typeof import('./src/components/ExcelImportModal/src/components/FileInfo.vue')['default']
   const ExcelImportModalSrcComponentsImportProgress: typeof import('./src/components/ExcelImportModal/src/components/ImportProgress.vue')['default']
   const ExcelImportModalSrcComponentsImportResult: typeof import('./src/components/ExcelImportModal/src/components/ImportResult.vue')['default']
   const ExcelImportModalSrcComponentsUploadSection: typeof import('./src/components/ExcelImportModal/src/components/UploadSection.vue')['default']
@@ -208,5 +211,6 @@ declare global {
   const TreeSelectSrcBasicTreeSelect: typeof import('./src/components/TreeSelect/src/BasicTreeSelect.vue')['default']
   const TreeSrcBasicTree: typeof import('./src/components/Tree/src/BasicTree.vue')['default']
   const TreeSrcComponentsSearchForm: typeof import('./src/components/Tree/src/components/searchForm/index.vue')['default']
+  const TUpload: typeof import('tdesign-vue-next')['Upload']
   const UploadSrcBasicUpload: typeof import('./src/components/Upload/src/BasicUpload.vue')['default']
 }

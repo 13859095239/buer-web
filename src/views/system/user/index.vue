@@ -24,12 +24,11 @@
     />
     <ResetPassword ref="resetPasswordRef" />
     <BasicExcelImportModal
-      v-model:visible="importVisible"
+      ref="importModalRef"
       title="用户数据导入"
       importUrl="system/user/import"
       templateUrl="system/user/template"
       @success="handleImportSuccess"
-      @error="handleImportError"
     />
   </SiderContainer>
 </template>
@@ -59,17 +58,11 @@ const resetPasswordRef = ref<InstanceType<typeof ResetPassword> | null>();
 const tableMethods = ref<TableMethods>({} as TableMethods);
 const deptId = ref<string | undefined>();
 const appStore = useAppStore();
-const importVisible = ref(false);
+const importModalRef = ref<InstanceType<typeof BasicExcelImportModal> | null>(null);
 
 // 导入相关方法
-const handleImportSuccess = (result: any) => {
-  MessagePlugin.success(`导入成功，共导入 ${result.success} 条数据`);
+const handleImportSuccess = () => {
   tableMethods.value.reload();
-  // importVisible.value = false;
-};
-
-const handleImportError = (error: Error) => {
-  MessagePlugin.error(`导入失败: ${error.message}`);
 };
 
 // 导出用户数据
@@ -111,7 +104,7 @@ const tableProps = shallowRef<BasicTableProps>({
     {
       name: '导入',
       onClick: () => {
-        importVisible.value = true;
+        importModalRef.value?.showModal();
       }
     },
     {

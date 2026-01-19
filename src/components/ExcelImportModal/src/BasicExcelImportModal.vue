@@ -6,10 +6,11 @@
   -->
 <template>
   <BasicModal
-    v-model:visible="visible"
+    v-model:methods="modalMethods"
     :title="props.title"
     :width="600"
     :footer="false"
+    :onClosed="handleClosed"
   >
     <div class="excel-import-modal">
       <div class="mb-4">
@@ -82,8 +83,9 @@
 </template>
 <script setup lang="ts">
 import { Button as TButton } from 'tdesign-vue-next';
-import { watch } from 'vue';
+import { ref } from 'vue';
 
+import type { ModalMethods } from '/@/components/Modal';
 import { BasicModal } from '/@/components/Modal';
 
 import FileInfo from './components/FileInfo.vue';
@@ -100,7 +102,7 @@ const props = withDefaults(defineProps<BasicExcelImportModalProps>(), {
 
 const emit = defineEmits<ExcelImportModalEmit>();
 
-const visible = defineModel<boolean>('visible', { default: false });
+const modalMethods = ref<ModalMethods>({} as ModalMethods);
 
 // 使用 hooks
 const { fileList, selectedFile, originalFileBuffer, formatResponse, handleFileChange, clearFile } = useFile();
@@ -108,29 +110,32 @@ const { handleDownloadTemplate } = useTemplate(props.templateUrl, emit);
 const { uploading, importResult, handleImport, clearImportResult } = useImport(props.importUrl, selectedFile, emit);
 const { handleDownloadErrorFile } = useErrorFile(originalFileBuffer, importResult, selectedFile);
 
+// 打开弹窗
+const showModal = () => {
+  // 打开前重置状态，避免上一次数据残留
+  clearFile();
+  clearImportResult();
+  modalMethods.value.show();
+};
+
 // 关闭弹窗
 const handleClose = () => {
-  visible.value = false;
-  // 延迟清空，等待弹窗关闭动画完成
+  modalMethods.value.close();
+};
+
+// 弹窗关闭后清空状态（延迟以配合关闭动画）
+const handleClosed = () => {
   setTimeout(() => {
     clearFile();
     clearImportResult();
   }, 300);
 };
 
-// 监听visible变化，重置状态
-watch(
-  () => visible.value,
-  (newVal) => {
-    if (!newVal) {
-      // 弹窗关闭时清空状态
-      setTimeout(() => {
-        clearFile();
-        clearImportResult();
-      }, 300);
-    }
-  }
-);
+// 对外暴露方法
+defineExpose({
+  showModal,
+  closeModal: handleClose
+});
 </script>
 <style lang="less" scoped>
 .excel-import-modal {

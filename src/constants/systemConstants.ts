@@ -100,12 +100,12 @@ export enum GENDER_ENUM {
 export const GENDER_LIST: StaticOption[] = [
   {
     id: GENDER_ENUM.MAN,
-    name: '是',
+    name: '男',
     theme: COMPONENT_THEME_ENUM.PRIMARY
   },
   {
     id: GENDER_ENUM.WOMAN,
-    name: '否',
+    name: '女',
     theme: COMPONENT_THEME_ENUM.DANGER
   }
 ];

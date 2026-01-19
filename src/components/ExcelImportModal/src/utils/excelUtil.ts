@@ -29,7 +29,7 @@ export function generateErrorFile(originalBuffer: ArrayBuffer, errorRows: ErrorR
   const worksheet = workbook.Sheets[firstSheetName];
 
   // 将工作表转换为JSON，方便操作
-  const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+  const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' }) as unknown[][];
 
   // 添加异常信息列标题
   if (jsonData.length > 0) {

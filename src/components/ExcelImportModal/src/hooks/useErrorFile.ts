@@ -12,7 +12,6 @@ import { saveFileByBlob } from '/@/utils/download';
 
 import type { ErrorRow } from '../utils/excelUtil';
 import { generateErrorFile } from '../utils/excelUtil';
-import { generateErrorFileName } from '../utils/fileUtil';
 
 export interface ImportResultWithErrors {
   errorRows?: ErrorRow[];
@@ -40,7 +39,10 @@ export function useErrorFile(
 
     try {
       const blob = generateErrorFile(originalFileBuffer.value, importResult.value.errorRows);
-      const fileName = generateErrorFileName(selectedFile.value?.name);
+      const originalFileName = selectedFile.value?.name;
+      const fileName = originalFileName
+        ? `异常_${originalFileName.replace(/\.(xls|xlsx)$/i, '')}.xlsx`
+        : `异常文件_${new Date().toISOString().slice(0, 10).replace(/-/g, '')}.xlsx`;
       saveFileByBlob(blob, fileName);
       MessagePlugin.success('异常文件下载成功');
     } catch (error: any) {

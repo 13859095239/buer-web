@@ -26,7 +26,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import { formatFileSize } from '../utils/fileUtil';
+import { formatFileSizeByBytes } from '/@/utils/format';
 
 interface Props {
   file: File | null;
@@ -35,6 +35,6 @@ interface Props {
 const props = defineProps<Props>();
 
 const fileSize = computed(() => {
-  return props.file ? formatFileSize(props.file.size) : '0 B';
+  return props.file ? formatFileSizeByBytes(props.file.size) : '0 B';
 });
 </script>

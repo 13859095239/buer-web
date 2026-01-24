@@ -29,7 +29,7 @@ export function useTemplate(templateUrl: string | undefined, emit: ExcelImportMo
         url: templateUrl,
         responseType: 'blob'
       });
-      saveFileByBlob(response as Blob, '导入模板');
+      saveFileByBlob(response);
       MessagePlugin.success('模板下载成功');
     } catch (error: any) {
       MessagePlugin.error(`模板下载失败: ${error.message || '未知错误'}`);

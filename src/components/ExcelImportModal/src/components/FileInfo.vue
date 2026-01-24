@@ -6,7 +6,7 @@
   -->
 <template>
   <!-- 文件格式提示 -->
-  <div class="file-format-tip rounded bg-blue-50 border border-blue-200 p-3 mb-3">
+  <div class="file-format-tip mb-3 mt-3 border border-blue-200 rounded bg-blue-50 p-3">
     <div class="text-sm text-blue-700">
       <i class="fas fa-info-circle mr-1"></i>
       仅支持导入 Excel 文件（.xls、.xlsx 格式）

@@ -30,8 +30,19 @@ export function useFile() {
     // 从文件列表中获取选中的文件
     const validFiles = files.filter(f => f.status !== 'fail' && f.status !== 'error');
     if (validFiles.length > 0) {
-      const fileObj = validFiles[0].raw || validFiles[0];
-      if (fileObj instanceof File) {
+      const fileItem = validFiles[0];
+      // 尝试多种方式获取 File 对象
+      let fileObj: File | null = null;
+      
+      if (fileItem.raw instanceof File) {
+        fileObj = fileItem.raw;
+      } else if (fileItem instanceof File) {
+        fileObj = fileItem;
+      } else if (fileItem.originFileObj instanceof File) {
+        fileObj = fileItem.originFileObj;
+      }
+      
+      if (fileObj) {
         selectedFile.value = fileObj;
 
         // 读取文件为 ArrayBuffer，用于后续生成异常文件
@@ -40,6 +51,11 @@ export function useFile() {
           originalFileBuffer.value = e.target?.result as ArrayBuffer;
         };
         reader.readAsArrayBuffer(fileObj);
+      } else {
+        // 如果无法获取 File 对象，尝试从文件信息创建
+        console.warn('无法从文件对象中提取 File，文件信息:', fileItem);
+        selectedFile.value = null;
+        originalFileBuffer.value = null;
       }
     } else {
       // 没有有效文件，清空选择

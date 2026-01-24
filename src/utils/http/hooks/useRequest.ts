@@ -20,9 +20,12 @@ export function useRequest(axiosInstance: AxiosInstance) {
         // 请求成功处理
         .then((response: AxiosResponse<R>) => {
           loading.value = false;
-          // 如果是blob类型响应，直接返回数据
+          // 如果是blob类型响应，返回包含data和headers的对象，以便提取文件名
           if (requestConfig.responseType === 'blob') {
-            resolve(response.data as any);
+            resolve({
+              data: response.data,
+              headers: response.headers
+            } as any);
             return;
           }
 

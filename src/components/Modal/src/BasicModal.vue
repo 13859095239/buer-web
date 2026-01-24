@@ -52,10 +52,11 @@
     </template>
     <!-- 自定义底部操作组件 -->
     <!-- <template
+      v-if="props.footer"
       #footer
-      v-if="props.footer">
+    >
       <div ref="modalTitleElRef">
-        <Footer :basic-props="props" />
+        <Footer :basicProps="props" />
       </div>
     </template> -->
   </Dialog>

@@ -73,7 +73,7 @@ const handleExport = async () => {
     deptId: deptId.value
   };
   const response = await exportUser(params);
-  saveFileByBlob(response as Blob, '用户数据');
+  saveFileByBlob(response);
   MessagePlugin.success('导出成功');
 };
 /** 初始化部门树对象 */
